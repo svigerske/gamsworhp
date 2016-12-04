@@ -8,6 +8,8 @@
 #include "gmomcc.h"
 #include "gevmcc.h"
 
+#include "worhp.h"
+
 int main(int argc, char** argv)
 {
    gmoHandle_t gmo = NULL;
@@ -49,6 +51,9 @@ int main(int argc, char** argv)
       goto TERMINATE;
    }
 
+   sprintf(buffer, "This is WORHP %d.%d." WORHP_PATCH ".", WORHP_MAJOR, WORHP_MINOR);
+   gevLogStat(gev, buffer);
+
    /* reformulate objective variable out of model, if possible */
    gmoObjStyleSet(gmo, gmoObjType_Fun);
 
@@ -83,7 +88,7 @@ int main(int argc, char** argv)
       else
          printf("Objective could not be evaluated. Error code: %d\n", numerr);
 
-      /* print (max) first constraint activities */
+      /* print (max) first 5 constraint activities */
       for( j = 0; j < gmoM(gmo) && j < 5; ++j )
       {
          gmoEvalFunc(gmo, j, x, &val, &numerr);
@@ -93,11 +98,17 @@ int main(int argc, char** argv)
          else
             printf("Activity constraint %2d [%-30s]: n/a, error code %d\n", j, name, numerr);
       }
+
+      /* set primal solution */
+      for( i = 0; i < gmoN(gmo); ++i )
+         x[i] = 42.0;
+      gmoSetSolutionPrimal(gmo, x);
    }
 
-   /* if this were a solver, we would pass the solution info back to GAMS via
-    * gmoUnloadSolutionLegacy(gmo);
-    */
+   /* pass the solution info back to GAMS */
+   gmoSolveStatSet(gmo, gmoSolveStat_Solver);
+   gmoModelStatSet(gmo, gmoModelStat_InfeasibleIntermed);
+   gmoUnloadSolutionLegacy(gmo);
 
    rc = EXIT_SUCCESS;
 
