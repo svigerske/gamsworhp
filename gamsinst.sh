@@ -121,10 +121,10 @@ chmod +x ${gamspath}/gmsworus.run
 if [ -e "${gamspath}/libstdc++.so.6" ] ; then
   # get highest GLIBCXX dependency from libstdc++.so.6 in GAMS
   gamsver=`strings ${gamspath}/libstdc++.so.6 | grep "^GLIBCXX_[0-9]" | sort -V | tail -1`
-  # check which libstdc++ is used by libgamsscip.so
-  userlibstdcxx=`ldd lib/libgamsscip.so | grep libstdc++ | awk '{print $3}'`
+  # check which libstdc++ is used by gamsworhp
+  userlibstdcxx=`ldd gamsworhp | grep libstdc++ | awk '{print $3}'`
   if [ -n "$userlibstdcxx" ] ; then
-    # get highest GLIBCXX dependency from libstdc++.so.6 that is used by SCIP
+    # get highest GLIBCXX dependency from libstdc++.so.6 that is used by WORHP
     userver=`strings ${userlibstdcxx} | grep "^GLIBCXX_[0-9]" | sort -V | tail -1`
   fi
   if [ -n "${gamsver}" ] && [ -n "${userver}" ] ; then
@@ -134,7 +134,7 @@ if [ -e "${gamspath}/libstdc++.so.6" ] ; then
     echo "libstdc++ versions GAMS: $gamsver   ${userlibstdcxx}: $userver"
     if [ `printf "$gamsver\n$userver" | sort -V | tail -1` != "$gamsver" ] ; then
       # hide GCC libraries in GAMS system directory
-      echo "GAMS libstdc++ is older than dependency of libgamsscip.so."
+      echo "GAMS libstdc++ is older than dependency of gamsworhp."
       for f in libgcc_s.so.1 libstdc++.so.6 libgfortran.so.3 libquadmath.so.0 ; do
         if [ -e "${gamspath}/$f" ] ; then
           echo "Moving ${gamspath}/$f to ${gamspath}/${f}.hide"
@@ -142,11 +142,11 @@ if [ -e "${gamspath}/libstdc++.so.6" ] ; then
         fi
       done
     else
-      echo "GAMS libstdc++ is at least as recent as dependency of libgamsscip.so, so no action needed."
+      echo "GAMS libstdc++ is at least as recent as dependency of gamsworhp, so no action needed."
     fi
 
   else
-    echo "Could not check GLIBCXX version of libstdc++.so.6 in GAMS directory and SCIP library dependency."
+    echo "Could not check GLIBCXX version of libstdc++.so.6 in GAMS directory and WORHP library dependency."
     echo "If running GAMS/WORHP fails due some missing GLIBCXX version, try removing libstdc++.so.6 from the GAMS system directory."
   fi
 
