@@ -314,12 +314,13 @@ int main(int argc, char** argv)
       case AcceptablePreviousConstantF:
       case OptimalSolutionConstantF:
       case AcceptableSolutionSKKT:
+#if WORHP_MAJOR >= 2
       case AcceptableSolutionScaled:
       case AcceptablePreviousScaled:
          gmoModelStatSet(gmo, (gmoObjNLNZ(gmo) || gmoNLNZ(gmo)) ? gmoModelStat_OptimalLocal : gmoModelStat_OptimalGlobal);
          gmoSolveStatSet(gmo, gmoSolveStat_Normal);
          break;
-
+#endif
       case FeasibleSolution:
          gmoModelStatSet(gmo, gmoModelStat_Feasible);
          gmoSolveStatSet(gmo, gmoSolveStat_Normal);
@@ -342,11 +343,12 @@ int main(int argc, char** argv)
 
       case MaxCalls:
       case MaxIter:
+#if WORHP_MAJOR >= 2
       case MaxIterUnscaled:
          gmoModelStatSet(gmo, wsp.Feasible ? gmoModelStat_Feasible : gmoModelStat_InfeasibleIntermed);
          gmoSolveStatSet(gmo, gmoSolveStat_Iteration);
          break;
-
+#endif
       case Timeout:
          gmoModelStatSet(gmo, wsp.Feasible ? gmoModelStat_Feasible : gmoModelStat_InfeasibleIntermed);
          gmoSolveStatSet(gmo, gmoSolveStat_Resource);
@@ -366,13 +368,14 @@ int main(int argc, char** argv)
 
       case ProblemInfeasible:
       case LocalInfeas:
+#if WORHP_MAJOR >= 2
       case DivergingPenaltyObj:
       case DivergingPenaltyFeas:
       case LocalInfeasOptimal:
          gmoModelStatSet(gmo, (gmoObjNLNZ(gmo) || gmoNLNZ(gmo)) ? gmoModelStat_InfeasibleLocal : gmoModelStat_InfeasibleGlobal);
          gmoSolveStatSet(gmo, gmoSolveStat_Normal);
          break;
-
+#endif
       case evalsNaN:
       case TooBig:
       case FunctionErrorF:
@@ -383,13 +386,13 @@ int main(int argc, char** argv)
          gmoModelStatSet(gmo, gmoSolveStat_EvalError);
          gmoSolveStatSet(gmo, gmoModelStat_ErrorNoSolution);
          break;
-
+#if WORHP_MAJOR >= 2
       case DivergingPrimal:
       case DivergingDual:
          gmoModelStatSet(gmo, gmoModelStat_Unbounded);
          gmoSolveStatSet(gmo, gmoSolveStat_Normal);
          break;
-
+#endif
       case LicenseError:
       case LicenseWarnExpiryDays:
          gmoModelStatSet(gmo, gmoModelStat_LicenseError);
