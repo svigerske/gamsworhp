@@ -297,6 +297,10 @@ int main(int argc, char** argv)
    */
    gmoSetHeadnTail(gmo, gmoHiterused, wsp.MajorIter);
    gmoSetHeadnTail(gmo, gmoHresused, gevTimeDiffStart(gev) - clockStart);
+   /* swap sign of constraints marginals if minimization */
+   if (gmoSense(gmo) == gmoObj_Min)
+      for (int i = 0; i < gmoM(gmo); ++i)
+         opt.Mu[i] = -opt.Mu[i];
    gmoSetSolution(gmo, opt.X, opt.Lambda, opt.Mu, opt.G);
    switch (cnt.status)
    {
