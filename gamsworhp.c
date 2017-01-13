@@ -119,6 +119,8 @@ int main(int argc, char** argv)
    * WORHP parameter initialization
    */
    InitParams(&status, &par);
+   WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
+   WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
 
    /*
    * problem size
@@ -484,7 +486,7 @@ void UserDF(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Par
       gevLogStatPChar(*gev, buffer);
    }
 
-   /* adapt coordinate storage foramte to WORHP */
+   /* adapt coordinate storage format to WORHP */
    for (int i = 0; i < wsp->DF.nnz; ++i)
    {
       wsp->DF.row[i] += 1;
