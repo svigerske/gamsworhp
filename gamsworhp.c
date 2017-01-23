@@ -44,7 +44,7 @@ int main(int argc, char** argv)
    double* DGvalInit;
    double* DGvalDenseInit;
    double clockStart;
-   int objMinMaxFac;
+   double objMinMaxFac;
 
    /* WORHP data structures */
    OptVar    opt;
@@ -121,6 +121,13 @@ int main(int argc, char** argv)
    InitParams(&status, &par);
    WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
    WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
+   if (gmoNLM(gmo) == 0) {
+      par.ScaledKKT = false;
+      par.UserHM = false;
+      par.BFGSmethod = 2;
+      par.BFGSmaxblockSize = 1;
+      par.BFGSminblockSize = 1;
+   }
 
    /*
    * problem size
