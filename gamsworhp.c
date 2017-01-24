@@ -308,6 +308,12 @@ int main(int argc, char** argv)
    if (gmoSense(gmo) == gmoObj_Min)
       for (int i = 0; i < gmoM(gmo); ++i)
          opt.Mu[i] = -opt.Mu[i];
+   if (wsp.ScaleObj /= 1.0) {
+      for (int i = 0; i < gmoM(gmo); ++i)
+         opt.Mu[i] = opt.Mu[i] / wsp.ScaleObj;
+      for (int i = 0; i < gmoN(gmo); ++i)
+         opt.Lambda[i] = opt.Lambda[i] / wsp.ScaleObj;
+   }
    gmoSetSolution(gmo, opt.X, opt.Lambda, opt.Mu, opt.G);
    switch (cnt.status)
    {
