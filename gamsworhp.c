@@ -45,6 +45,8 @@ int main(int argc, char** argv)
    double* DGvalDenseInit;
    double clockStart;
    double objMinMaxFac;
+   double zero = 0.0;
+   int isLP;
 
    /* WORHP data structures */
    OptVar    opt;
@@ -121,6 +123,12 @@ int main(int argc, char** argv)
    InitParams(&status, &par);
    WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
    WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
+
+   /* it's an LP if no nonlinear equation and objective is linear (it might be that NLM can be 0 when only objective is nonlinear
+    * there should be no discrete variables if someone called Worhp
+    */
+   isLP = (gmoNLM(gmo) == 0 && gmoGetObjOrder(gmo) == gmoorder_L);
+
    /* 
    * currently WORHP does assume that the hessian cannot constantly be zero and
    * thus the current hessian regularization can be problematic for LPs. 
@@ -128,7 +136,7 @@ int main(int argc, char** argv)
    * an increase of iterations. We plan that WORHP can handle this internally in
    * a future release. 
    */
-   if (gmoNLM(gmo) == 0) {
+   if (isLP) {
       par.ScaledKKT = false;
       par.UserHM = false;
       par.BFGSmethod = 2;
@@ -160,7 +168,7 @@ int main(int argc, char** argv)
    * disabled in that case. We plan that WORHP can handle this internally in
    * a future release. 
    */
-   if (gmoNLM(gmo) == 0) {
+   if (isLP) {
       wsp.RelaxCon = false;
       wsp.RelaxNvar = 0;
    }
@@ -334,7 +342,7 @@ int main(int argc, char** argv)
       for (int i = 0; i < gmoN(gmo); ++i)
          opt.Lambda[i] = opt.Lambda[i] / wsp.ScaleObj;
    }
-   gmoSetSolution(gmo, opt.X, opt.Lambda, opt.Mu, opt.G);
+   gmoSetSolution(gmo, opt.X, opt.Lambda != NULL ? opt.Lambda : &zero, opt.Mu != NULL ? opt.Mu : &zero, opt.G != NULL ? opt.G : &zero);
    switch (cnt.status)
    {
       /* successful terminations */
