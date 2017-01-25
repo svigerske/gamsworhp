@@ -36,7 +36,7 @@ int main(int argc, char** argv)
    int status;
    int* HMrowInit;
    int* HMcolInit;
-   int* HMpermInit;
+   int* HMpermInit = NULL;
    double* HMvalInit;
    int HMdimMiss;
    int* DGcolInit;
