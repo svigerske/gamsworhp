@@ -121,6 +121,13 @@ int main(int argc, char** argv)
    InitParams(&status, &par);
    WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
    WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
+   /* 
+   * currently WORHP does assume that the hessian cannot constantly be zero and
+   * thus the current hessian regularization can be problematic for LPs. 
+   * Thus, we currently switch to an BFGS method for LPs with the disadvantage of
+   * an increase of iterations. We plan that WORHP can handle this internally in
+   * a future release. 
+   */
    if (gmoNLM(gmo) == 0) {
       par.ScaledKKT = false;
       par.UserHM = false;
@@ -146,6 +153,16 @@ int main(int argc, char** argv)
    {
       gevLogStat(gev, "Error: WORHP Initialisation failed.");
       return EXIT_FAILURE;
+   }
+
+   /* 
+   * currently WORHP's relaxation may not be suitable for LPs and thus will be
+   * disabled in that case. We plan that WORHP can handle this internally in
+   * a future release. 
+   */
+   if (gmoNLM(gmo) == 0) {
+      wsp.RelaxCon = false;
+      wsp.RelaxNvar = 0;
    }
 
    /*
@@ -305,9 +322,12 @@ int main(int argc, char** argv)
    gmoSetHeadnTail(gmo, gmoHiterused, wsp.MajorIter);
    gmoSetHeadnTail(gmo, gmoHresused, gevTimeDiffStart(gev) - clockStart);
    /* swap sign of constraints marginals if minimization */
-   if (gmoSense(gmo) == gmoObj_Min)
+   if (gmoSense(gmo) == gmoObj_Min) {
       for (int i = 0; i < gmoM(gmo); ++i)
          opt.Mu[i] = -opt.Mu[i];
+      for (int i = 0; i < opt.n; ++i)
+         opt.Lambda[i] = -opt.Lambda[i];
+   }
    if (wsp.ScaleObj /= 1.0) {
       for (int i = 0; i < gmoM(gmo); ++i)
          opt.Mu[i] = opt.Mu[i] / wsp.ScaleObj;
