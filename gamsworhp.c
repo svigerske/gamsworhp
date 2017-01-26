@@ -121,6 +121,7 @@ int main(int argc, char** argv)
    InitParams(&status, &par);
    WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
    WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
+   WorhpSetDoubleParam(&par, "TolComp", 1e-6);
    /* 
    * currently WORHP does assume that the hessian cannot constantly be zero and
    * thus the current hessian regularization can be problematic for LPs. 
@@ -334,6 +335,7 @@ int main(int argc, char** argv)
       for (int i = 0; i < gmoN(gmo); ++i)
          opt.Lambda[i] = opt.Lambda[i] / wsp.ScaleObj;
    }
+
    gmoSetSolution(gmo, opt.X, opt.Lambda, opt.Mu, opt.G);
    switch (cnt.status)
    {
@@ -743,6 +745,7 @@ void UserHM(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Par
       for (int k = (nnz_init - (opt->n - *HMdimMiss)); k < nnz_init; ++k)
       {
          wsp->HM.val[(*HMpermInit)[j]] = (*HMvalInit)[wsp->HM.perm[k]-1];
+         j += 1;
       }
    }
    else
