@@ -14,8 +14,6 @@
 void UserF(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Params *par, Control *cnt, int objMinMaxFac);
 /* Function of constraints */
 void UserG(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Params *par, Control *cnt);
-/* Gradient structure */
-int StructDF(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Params *par, Control *cnt);
 /* Gradient of objective function */
 void UserDF(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Params *par, Control *cnt, int objMinMaxFac);
 /* Jacobian structure */
@@ -123,6 +121,9 @@ int main(int argc, char** argv)
    InitParams(&status, &par);
    WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
    WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
+   WorhpSetDoubleParam(&par, "TolOpti", 1e-7);
+   WorhpSetDoubleParam(&par, "TolFeas", 1e-7);
+   WorhpSetDoubleParam(&par, "TolComp", 1e-7);
 
    /* it's an LP if no nonlinear equation and objective is linear (it might be that NLM can be 0 when only objective is nonlinear
     * there should be no discrete variables if someone called Worhp
@@ -149,7 +150,7 @@ int main(int argc, char** argv)
    */
    opt.n = gmoN(gmo);
    opt.m = gmoM(gmo);
-   wsp.DF.nnz = gmoObjNZ(gmo);
+   wsp.DF.nnz = WorhpMatrix_Init_Dense;
    wsp.DG.nnz = WorhpMatrix_Dont_Allocate;
    wsp.HM.nnz = WorhpMatrix_Dont_Allocate;
 
@@ -222,12 +223,6 @@ int main(int argc, char** argv)
             break;
       }
    }
-
-   /*
-   * WORHP set structure of gradient
-   */
-   if (wsp.DF.NeedStructure)
-      StructDF(&gmo, &gev, &opt, &wsp, &par, &cnt);
 
    /*
    * WORHP set structure of jacobian
@@ -509,21 +504,17 @@ void UserG(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Para
    }
 }
 
-/* Gradient structure */
-int StructDF(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Params *par, Control *cnt)
-{
-   UserDF(gmo, gev, opt, wsp, par, cnt, 1.0);
-   return 0;
-}
-
 /* Gradient of objective function */
 void UserDF(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Params *par, Control *cnt, int objMinMaxFac)
 {
    int nz;
    int nlnz;
    int rc;
+   int numerr;
+   double val;
+   double gx;
 
-   rc = gmoGetObjSparse(*gmo, wsp->DF.row, wsp->DF.val, NULL, &nz, &nlnz);
+   rc = gmoEvalGradObj(*gmo, opt->X, &val, wsp->DF.val, &gx, &numerr);
    if (rc != 0)
    {
       char buffer[255];
@@ -534,7 +525,6 @@ void UserDF(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Par
    /* adapt coordinate storage format to WORHP */
    for (int i = 0; i < wsp->DF.nnz; ++i)
    {
-      wsp->DF.row[i] += 1;
       wsp->DF.val[i] *= wsp->ScaleObj;
       wsp->DF.val[i] *= objMinMaxFac;
    }
@@ -751,6 +741,7 @@ void UserHM(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Par
       for (int k = (nnz_init - (opt->n - *HMdimMiss)); k < nnz_init; ++k)
       {
          wsp->HM.val[(*HMpermInit)[j]] = (*HMvalInit)[wsp->HM.perm[k]-1];
+         j += 1;
       }
    }
    else
