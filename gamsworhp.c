@@ -441,6 +441,17 @@ int main(int argc, char** argv)
          gmoSolveStatSet(gmo, gmoSolveStat_License);
          break;
    }
+
+   if( gmoModelType(gmo) == gmoProc_cns )
+      switch( gmoModelStat(gmo) )
+      {
+         case gmoModelStat_OptimalGlobal:
+         case gmoModelStat_OptimalLocal:
+         case gmoModelStat_Feasible:
+         case gmoModelStat_Integer:
+            gmoModelStatSet(gmo, gmoModelStat_Solved);
+      }
+
    gmoUnloadSolutionLegacy(gmo);
    gmoHessUnload(gmo);
 
