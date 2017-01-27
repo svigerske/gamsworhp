@@ -119,7 +119,9 @@ int main(int argc, char** argv)
    InitParams(&status, &par);
    WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
    WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
-   WorhpSetDoubleParam(&par, "TolComp", 1e-6);
+   WorhpSetDoubleParam(&par, "TolOpti", 1e-7);
+   WorhpSetDoubleParam(&par, "TolFeas", 1e-7);
+   WorhpSetDoubleParam(&par, "TolComp", 1e-7);
    /* 
    * currently WORHP does assume that the hessian cannot constantly be zero and
    * thus the current hessian regularization can be problematic for LPs. 
