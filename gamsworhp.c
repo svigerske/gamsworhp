@@ -103,6 +103,7 @@ int main(int argc, char** argv)
    gmoObjStyleSet(gmo, gmoObjType_Fun);
    gmoObjReformSet(gmo, 1);
    gmoIndexBaseSet(gmo, 0);
+   gmoSetNRowPerm(gmo); /* hide =N= rows */
    objMinMaxFac = (gmoSense(gmo) == gmoObj_Max) ? -1.0 : 1.0;
 
    /*
