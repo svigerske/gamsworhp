@@ -148,6 +148,14 @@ int main(int argc, char** argv)
       par.BFGSminblockSize = 1;
    }
 
+   /* user supplied parameter file */
+   if( gmoOptFile(gmo) > 0 )
+   {
+      char buffer[GMS_SSSIZE];
+      gmoNameOptFile(gmo, buffer);
+      ReadParamsNoInit(&status, buffer, &par);
+   }
+
    /*
    * problem size
    */
