@@ -10,13 +10,14 @@ The latter will install the build of the GAMS/Worhp interface as solver
 WORHP in GAMS. The GAMS system directory need to be writable.
 
 
-=== Testing ===
+### Testing
 
 The test/ directory contains a very basic functionality to run GAMS
 solvers on a set of instances and produce GAMS trace files, which contain
 for each run a line with information on solution time, solve status, etc.
 
 To use it:
+
 1. Change to the test/ directory.
 2. Create a symlink called "instances" pointing to a directory with GAMS
    instances, e.g., the "data/gms" directory from MINLPLib 2
