@@ -12,4 +12,4 @@ install: gamsworhp
 	cp $< $@
 
 LDFLAGS = -Wl,-no-as-needed -ldl -Wl,-rpath,$(realpath gams) -Lworhp/lib -lworhp -Wl,-rpath,$(realpath worhp/lib)
-CFLAGS = -Igams/apifiles/C/api -Iworhp/include/worhp -g
+CFLAGS = -Igams/apifiles/C/api -Iworhp/include/worhp -DSRCDIR=\"$(realpath $(PWD))\" -g

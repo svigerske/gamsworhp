@@ -119,7 +119,9 @@ int main(int argc, char** argv)
    /*
    * WORHP parameter initialization
    */
-   InitParams(&status, &par);
+   /* InitParams(&status, &par); */
+   ReadParams(&status, SRCDIR "/worhp/bin/worhp.xml", &par);
+
    WorhpSetIntParam(&par, "MaxIter", gevGetIntOpt(gev, gevIterLim));
    WorhpSetDoubleParam(&par, "Timeout", gevGetDblOpt(gev, gevResLim));
    WorhpSetDoubleParam(&par, "TolOpti", 1e-7);
