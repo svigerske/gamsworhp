@@ -1,4 +1,6 @@
-Starting point for a GAMS/Worhp interface.
+GAMS/Worhp interface
+
+### Building on Linux
 
 Create a symlink 'gams' pointing to a GAMS system directory.
 
@@ -9,6 +11,14 @@ Run make and make install.
 The latter will install the build of the GAMS/Worhp interface as solver
 WORHP in GAMS. The GAMS system directory need to be writable.
 
+### Building on Windows (MSVC 32bit)
+
+Modify paths in './buildcl.sh'.
+
+Open msys, so that cl is found in the PATH.
+Run 'buildcl.sh'.
+This will also execute 'gamsinstwin.sh' to install GAMS/Worph as a solver
+in GAMS.
 
 ### Testing
 
@@ -35,3 +45,5 @@ The following options can be passed to ```make```:
 - SOLVER: the GAMS solver to be run
 - OPTFILE: the solver option file to be used, or 0 for none
 - TIME: timelimit
+
+TODO: solvers should run through examiner2
