@@ -44,7 +44,7 @@ fi
 # keep backup of current gmscmpun.txt file
 cp -f "$gmscmp" "$gmscmpbak"
 
-awk -v bin="$bin" '
+awk '
 BEGIN {
    fileType      = 111;
    dictType      = 5;
@@ -55,7 +55,7 @@ BEGIN {
    #scriptCmd  = "gmsgennt.cmd";
    #execCmd    = "gmsgennx.exe";
    scriptCmd = "gmsworus.run";
-   execCmd   = bin;
+   execCmd   = "gmsworux.out";
 
    written["WORHP"] = 0;
    libid["WORHP"] = "wor";
@@ -107,6 +107,9 @@ ${bin} \$4
 [ $? = 0 ] || echo "error: solver rc $? != 0" 1>&2; exit 11
 EOF
 chmod +x ${gamspath}/gmsworus.run
+
+rm -f ${gamspath}/gmsworux.out
+ln -s $bin ${gamspath}/gmsworux.out
 
 #echo "Installing $lib in $gamspath"
 
