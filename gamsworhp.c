@@ -25,6 +25,14 @@ int StructHM(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Pa
 /* Hessian of Lagrangian */
 void UserHM(gmoHandle_t *gmo, gevHandle_t *gev, OptVar *opt, Workspace *wsp, Params *par, Control *cnt, int** HMrowInit, int** HMcolInit, double** HMvalInit, int** HMpermInit, int* HMdimMiss, int objMinMaxFac);
 
+/* workaround missing function in worhp library for windows */
+#ifdef _WIN32
+DLL_PUBLIC void* wRealloc(void* ptr, size_t size)
+{
+   return realloc(ptr, size);
+}
+#endif
+
 int main(int argc, char** argv)
 {
    gmoHandle_t gmo = NULL;
