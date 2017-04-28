@@ -39,11 +39,11 @@ The ```make``` call creates for each solver run on an instance a trace
 file in subdirectory trc/, a log file in subdirectory log/, and a GAMS
 listing file in subdirectory lst/. The invidual trace files are then
 combined into a single one. Remove a trace file to repeat a run.
+Solvers are run through GAMS/Examiner2, which computes primal and dual
+violations of returned solutions. The violations are stored in the trace file.
 
 The following options can be passed to ```make```:
 - TESTSET: specify the testset, a file $(TESTSET).test is expected.
 - SOLVER: the GAMS solver to be run
 - OPTFILE: the solver option file to be used, or 0 for none
 - TIME: timelimit
-
-TODO: solvers should run through examiner2
